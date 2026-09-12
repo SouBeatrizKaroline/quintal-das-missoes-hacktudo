@@ -1,0 +1,17 @@
+{
+  "name": "quintal-das-missoes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Um RPG cooperativo de pequenas missões para aprender dentro e fora da tela. Protótipo HackTudo.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "start": "node --env-file-if-exists=.env server.js",
+    "teacher": "node --env-file-if-exists=.env teacher-server.js",
+    "test": "node --test tests/*.test.js",
+    "test:e2e": "playwright test",
+    "check": "node scripts/check.mjs"
+  },
+  "devDependencies": { "@playwright/test": "^1.58.2" }
+}

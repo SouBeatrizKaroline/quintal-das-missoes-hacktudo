@@ -1,0 +1,11 @@
+import { chromium } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
+await mkdir(new URL('../docs/images/',import.meta.url),{recursive:true});
+const browser = await chromium.launch();
+const page = await browser.newPage({viewport:{width:1440,height:1024},deviceScaleFactor:1});
+await page.goto('http://127.0.0.1:4317');await page.evaluate(()=>document.fonts.ready);
+await page.screenshot({path:new URL('../docs/images/mapa-desktop.png',import.meta.url).pathname.replace(/^\/([A-Z]:)/,'$1'),fullPage:true});
+await page.setViewportSize({width:390,height:844});await page.reload();await page.evaluate(()=>document.fonts.ready);
+console.log(JSON.stringify(await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width&&r.right>innerWidth+1;}).map(e=>({tag:e.tagName,cls:e.className,id:e.id,right:e.getBoundingClientRect().right})).slice(0,15)}))));
+await page.screenshot({path:new URL('../docs/images/mapa-mobile.png',import.meta.url).pathname.replace(/^\/([A-Z]:)/,'$1'),fullPage:true});
+await browser.close();

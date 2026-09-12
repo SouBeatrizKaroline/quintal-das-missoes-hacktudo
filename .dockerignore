@@ -1,0 +1,10 @@
+.git
+.env
+.env.*
+node_modules
+teacher
+docs
+tests
+work
+test-results
+playwright-report
