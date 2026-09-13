@@ -1,7 +1,7 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Oficina do educador | Quintal das Missões</title><link rel="stylesheet" href="/styles.css"><link rel="icon" href="/assets/favicon.svg"></head><body>
-<header class="topbar" id="topbar">
+<header id="topbar">
   <a class="brand" href="/" aria-label="Quintal das Missões, início"><span class="brand-icon">✿</span><span>quintal<span class="brand-small">OFICINA</span></span></a>
-  <span class="badge topbar-badge">Ambiente local • uso adulto</span>
+  <span class="badge">Ambiente local • uso adulto</span>
 </header>
 <main><p class="eyebrow">UMA BOA AULA COMEÇA COM UMA BOA PERGUNTA</p><h1>Você conhece a turma.<br>O Gemini ajuda no rascunho.</h1><p class="intro">Prepare uma missão, ajuste ao seu contexto e leve para o quintal. A decisão pedagógica continua com você.</p>
 <div class="layout"><section class="panel"><h2>1. Prepare o convite</h2><p class="muted">Só as opções abaixo vão para o Google. Nenhum nome, resposta ou dado de estudante.</p><form id="generator">
@@ -19,7 +19,13 @@
 <footer class="site-footer" role="contentinfo">
   <span class="footer-brand">quintal <span aria-hidden="true">✿</span> oficina do educador</span>
   <nav class="footer-nav" aria-label="Links do rodapé">
-    <a class="text-button" href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">Termos da API Gemini</a>
+    <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">Termos da API Gemini</a>
+    <a href="https://ai.google.dev/responsible" target="_blank" rel="noreferrer">IA Responsável</a>
   </nav>
-  <span class="footer-tag">Protótipo • HackTudo 2025 • Não compartilhar com estudantes</span>
-</footer><script type="module" src="/app.js"></script></body></html>
+  <span class="footer-tag">Protótipo HackTudo 2025 • Não compartilhar com estudantes</span>
+</footer>
+<script type="module" src="/app.js"></script>
+<script>
+(function(){var h=document.getElementById('topbar');if(!h)return;var fn=function(){h.classList.toggle('scrolled',window.scrollY>8)};window.addEventListener('scroll',fn,{passive:true});fn()})();
+</script>
+</body></html>
