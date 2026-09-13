@@ -3,6 +3,8 @@ import { starterPack } from '/data.js';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let draft = null;
+// Mapeia personagens para frases e papel: mesmo esquema de data.js, sem import extra.
+const CHAR_META = { cat: { name: 'Mimo', phrase: 'Uma boa pergunta abre mais caminhos que uma resposta pronta.', role: 'Investigar' }, dog: { name: 'Bento', phrase: 'Toda voz tem lugar aqui.', role: 'Colaborar' }, hen: { name: 'Cora', phrase: 'E se a gente experimentasse de outro jeito?', role: 'Criar' }, rooster: { name: 'Zeca', phrase: 'Uma ideia fica melhor quando a gente explica.', role: 'Compartilhar' }, chick: { name: 'Pipoca', phrase: 'Seu ritmo também faz parte da aventura.', role: 'Cuidar' } };
 $('#subject').innerHTML = SUBJECTS.map(s => `<option>${s}</option>`).join('');
 function topics() { $('#topic').innerHTML = TOPICS[$('#subject').value].map(s => `<option>${s}</option>`).join(''); }
 $('#subject').onchange = topics; topics();
@@ -10,19 +12,33 @@ $('#generator').onsubmit = async e => {
   e.preventDefault();
   const button = $('#generate'); button.disabled = true; button.textContent = 'Preparando uma ideia...';
   $('#status').textContent = 'O Gemini está criando um rascunho. Isso pode levar alguns segundos.';
+  const t0 = Date.now();
   try {
     const response = await fetch('/api/mission', { method: 'POST', headers: { 'Content-Type':'application/json', Authorization:`Bearer ${$('#token').value}` }, body: JSON.stringify({ subject: $('#subject').value, topic: $('#topic').value, grade: $('#grade').value, minutes: Number($('#minutes').value), resources: $('#resources').value }), signal: AbortSignal.timeout(30000) });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'Não foi possível gerar.');
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
     loadDraft(result.mission, `Gemini • ${result.model}`);
-    $('#status').textContent = 'Rascunho recebido. Revise e ajuste cada etapa antes de exportar.';
+    $('#status').textContent = `Rascunho criado em ${elapsed}s. Revise e ajuste cada etapa antes de exportar.`;
+    // Missão Relâmpago: animação de digitação no título após recebimento.
+    const titleEl = $('#title');
+    if (titleEl) {
+      const full = titleEl.value; titleEl.value = '';
+      let i = 0;
+      const type = setInterval(() => { titleEl.value += full[i++]; if (i >= full.length) clearInterval(type); }, 35);
+    }
   } catch (err) { $('#status').textContent = err.name === 'TimeoutError' ? 'O tempo de espera terminou. Tente de novo ou use a missão pronta.' : err.message === 'Failed to fetch' ? 'Sem conexão com a oficina. Use a missão pronta.' : err.message; }
-  finally { button.disabled = false; button.textContent = '✦ Criar rascunho com Gemini'; }
+  finally { button.disabled = false; button.textContent = '❆ Criar rascunho com Gemini'; }
 };
 $('#load-example').onclick = () => { loadDraft(structuredClone(starterPack.missions[0]), 'Missão pronta • sem IA'); $('#status').textContent = 'Exemplo local aberto. Nenhuma chamada ao Gemini foi feita.'; };
 function field(key, label, value, max=600, multiline=true) { return `<label for="${key}">${label}</label>${multiline ? `<textarea id="${key}" required minlength="3" maxlength="${max}">${esc(value)}</textarea>` : `<input id="${key}" required minlength="3" maxlength="${max}" value="${esc(value)}">`}`; }
 function loadDraft(m, source) {
   draft = m; $('#empty').hidden = true; $('#review-form').hidden = false; $('#source').textContent = source; $('#reviewed').checked = false; $('#review-status').textContent = '';
+  // Personagem dinâmico: avatar e frase ao lado do formulário.
+  const meta = CHAR_META[m.character] || CHAR_META.cat;
+  let charBanner = $('#char-banner');
+  if (!charBanner) { charBanner = document.createElement('div'); charBanner.id = 'char-banner'; charBanner.style.cssText = 'display:flex;align-items:center;gap:14px;padding:12px 16px;background:#f4f6eb;border:1px solid #dce3cc;border-radius:14px;margin-bottom:20px'; $('#review-form').prepend(charBanner); }
+  charBanner.innerHTML = `<img src="/assets/${m.character}.svg" alt="${meta.name}" style="width:52px;height:56px;object-fit:contain"><div><strong style="font-size:13px">${meta.name} / ${meta.role}</strong><p style="font-size:11px;color:#596952;font-style:italic;margin:3px 0 0">&ldquo;${meta.phrase}&rdquo;</p></div>`;
   $('#fields').innerHTML = field('title','Nome da missão',m.title,80,false) + field('objective','Objetivo de aprendizagem',m.objective) + field('materials','Materiais disponíveis',m.materials) + m.steps.map((s,i) => `<h3 class="step-heading">Etapa ${i+1}: ${s.mode === 'screen' ? 'com o aparelho' : s.mode === 'away' ? 'fora da tela' : 'em conversa'}</h3>${field(`step-title-${i}`,'Título da etapa',s.title,80,false)}${field(`step-text-${i}`,'Orientação para o grupo',s.text)}`).join('') + field('offline','Alternativa equivalente em papel',m.offline) + field('reflection','Pergunta para reflexão',m.reflection);
   $('#fields').querySelectorAll('input,textarea').forEach(el => el.addEventListener('input', () => { $('#reviewed').checked = false; $('#review-status').textContent = ''; }));
 }
