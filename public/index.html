@@ -8,7 +8,7 @@
 </head>
 <body>
 <a class="skip" href="#main">Pular para as missões</a>
-<header class="topbar">
+<header class="topbar" id="topbar">
   <a class="brand" href="/" aria-label="Quintal das Missões, início"><span class="brand-icon">✿</span><span>quintal<span class="brand-small">DAS MISSÕES</span></span></a>
   <nav aria-label="Navegação principal"><button class="nav-item active" data-view="map" aria-current="page"><span aria-hidden="true">⌘</span> Explorar</button><button class="nav-item" data-view="journal"><span aria-hidden="true">▤</span> Meu caderno</button><button class="nav-item" data-view="crew"><span aria-hidden="true">♡</span> A turma</button></nav>
   <button class="small-button" id="about-button">Como jogar <span aria-hidden="true">↗</span></button>
@@ -37,7 +37,14 @@
   <section id="journal-view" class="view hidden" aria-labelledby="journal-title"><p class="eyebrow">MEMÓRIAS DE UMA PEQUENA AVENTURA</p><h1 id="journal-title">Meu caderno de descobertas<span>.</span></h1><p>Suas anotações ficam neste aparelho. Não são enviadas ao educador ou à inteligência artificial.</p><div class="journal-actions"><label class="check-label"><input type="checkbox" id="remember"> Guardar meu caderno neste navegador</label><button class="small-button" id="export-journal">Baixar caderno</button><button class="text-button danger" id="clear-journal">Apagar meu progresso</button></div><div id="journal-content" class="journal-grid"></div></section>
   <section id="crew-view" class="view hidden" aria-labelledby="crew-title"><p class="eyebrow">CINCO JEITOS DE FAZER PARTE</p><h1 id="crew-title">Uma turma. Muitas descobertas<span>.</span></h1><p>Troquem os papéis a cada missão. Todo mundo pode perguntar, criar e cuidar.</p><div id="crew-content" class="crew-grid"></div></section>
 </main>
-<footer class="site-footer"><span>quintal <span aria-hidden="true">✿</span> pequenas missões, grandes descobertas</span><button class="text-button" id="about-footer">Como jogar</button><button class="text-button" id="privacy-button">Privacidade e fontes</button><span>Protótipo para o HackTudo</span></footer>
+<footer class="site-footer" role="contentinfo">
+  <span class="footer-brand">quintal <span aria-hidden="true">✿</span> pequenas missões, grandes descobertas</span>
+  <nav class="footer-nav" aria-label="Links do rodapé">
+    <button class="text-button" id="about-footer">Como jogar</button>
+    <button class="text-button" id="privacy-button">Privacidade e fontes</button>
+  </nav>
+  <span class="footer-tag">Protótipo • HackTudo 2025</span>
+</footer>
 <dialog id="mission-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="eyebrow" id="dialog-kicker">UMA MISSÃO EM GRUPO</span><button class="close" data-close aria-label="Fechar missão">×</button></div><div id="mission-body"></div></dialog>
 <dialog id="info-dialog" aria-labelledby="info-title"><div class="dialog-top"><span class="eyebrow">QUINTAL DAS MISSÕES</span><button class="close" data-close aria-label="Fechar informações">×</button></div><div id="info-body"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
