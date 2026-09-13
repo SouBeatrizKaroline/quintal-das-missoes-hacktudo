@@ -15,6 +15,19 @@ export async function generateMission(input, { apiKey, model = 'gemini-3.6-flash
   if (!/^[a-zA-Z0-9.-]+$/.test(model)) throw Object.assign(new Error('Modelo inválido na configuração.'), { status: 503 });
   // Reconstrói exclusivamente os campos permitidos. Não encaminha texto livre ou dados de alunos.
   const context = Object.fromEntries(['subject', 'topic', 'grade', 'minutes', 'resources'].map(k => [k, input[k]]));
+  // Mapeia cada tema ao personagem cujo papel pedagógico melhor representa a missão.
+  const TOPIC_CHARACTER = {
+    'Água e consumo consciente':   'dog',      // Bento: colaborar, propor ações coletivas
+    'Biodiversidade no entorno':   'cat',      // Mimo: investigar, levantar hipóteses
+    'Fato, opinião e fonte':       'cat',      // Mimo: investigar, questionar fontes
+    'Narrativas coletivas':        'hen',      // Cora: criar, produzir narrativa
+    'Frações no cotidiano':        'rooster',  // Zeca: compartilhar, explicar raciocínio
+    'Estimativas e medidas':       'dog',      // Bento: colaborar, medir e comparar em grupo
+    'Memória e fontes históricas':  'cat',      // Mimo: investigar, analisar evidências
+    'Mudanças no cotidiano':       'rooster',  // Zeca: compartilhar perspectivas
+    'Mapas e pontos de referência': 'rooster',  // Zeca: compartilhar, orientar e apresentar
+    'Paisagens e transformações':  'hen',      // Cora: criar, observar e registrar
+  };
   let response;
   try {
     response = await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
@@ -31,7 +44,7 @@ export async function generateMission(input, { apiKey, model = 'gemini-3.6-flash
   try {
     const data = await response.json();
     const raw = JSON.parse(data.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '{}');
-    const mission = { ...raw, id: `gemini-${Date.now()}`, character: 'cat', minutes: input.minutes };
+    const mission = { ...raw, id: `gemini-${Date.now()}`, character: TOPIC_CHARACTER[input.topic] || 'cat', minutes: input.minutes };
     if (!validateMission(mission)) throw new Error('schema');
     return { mission, source: 'gemini', model, reviewed: false };
   } catch { throw Object.assign(new Error('O rascunho veio incompleto. Gere novamente ou use a missão pronta.'), { status: 502 }); }
